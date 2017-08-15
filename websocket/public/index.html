@@ -1,0 +1,97 @@
+<!doctype html>
+<html>
+<head>
+	<meta charset="utf-8">
+    <title>danmu</title>
+    <style type="text/css">
+    	#play{
+            width:600px;
+            height:500px;
+            background-color:#000;
+        }
+         
+        #danmu{
+            width:600px;
+            height:500px;
+            background-color:#fff;
+            z-index:9999;
+            background-color: rgba(000, 1, 000, 0.1); 
+        }
+        #textStyle{
+            position:absolute;
+            font-size:24px;
+            color:red;
+        }
+    </style>
+</head>
+
+<body>
+    <div id="paly">
+    	<div id="danmu"></div>
+    </div>
+    <form action="">
+    	<input type="" name="" id="text">
+    	<!-- <button>Send</button> -->
+    	<input type="button" name="" value="Send" id="button">
+
+    </form>
+    <!-- <script src="/socket.io/socket.io.js"></script> -->
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.0.3/socket.io.js"></script>
+    <script>
+    	var text = document.querySelector('#text');
+	    var paly = document.querySelector('#paly');
+	    var form = document.querySelector('form');
+	    var button = document.querySelector('#button');
+		window.onload = function() {
+			var socket = io();
+		  	button.addEventListener('click', function () {
+		  		socket.emit('message', text.value);
+		  		text.value = '';
+		         return false;
+
+		  	})
+		  	 socket.on('message', function (msg) {
+		  	 	var si;
+		  	 	//弹幕
+		  		function danmu(){
+		            clearInterval(si);
+		            var danmu = document.getElementById("danmu");	
+		            var textStyle="<font id='textStyle'>"+msg+"</font>";
+		            mathHeight = Math.round(Math.random()*danmu.offsetHeight)+"px";
+		            var textLeft=danmu.offsetWidth+"px";  
+		            danmu.innerHTML=textStyle;
+		            var textStyleObj = document.getElementById("textStyle");
+		            textStyleObj.style.left=textLeft;
+		            textStyleObj.style.top=mathHeight;
+		             
+		            var x=parseInt(textStyleObj.style.left);
+		            // si = setInterval("xunhuan("+x+")",100);
+		            //弹幕发送过多,有小问题
+		           	si = setInterval(function (left) {
+		           		var textStyleObj = document.getElementById("textStyle");
+			            textStyleObj.style.left=left;
+			             
+			            var x=parseInt(textStyleObj.style.left);
+			 
+			            if(x<textStyleObj.style.width){
+			                document.getElementById("danmu").innerHTML="";
+			                clearInterval(si);
+			            }else{
+			                x-=18;
+			            }
+			             
+			            textStyleObj.style.left=x+"px";
+
+		           },100);
+		          
+        		}
+
+        		danmu()
+
+		  	})
+		}
+    </script>
+</body>
+
+</html>
